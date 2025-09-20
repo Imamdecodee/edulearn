@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduLearn - Complete Navigation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Variables for Theming */
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --success: #4ade80;
+            --warning: #facc15;
+            --error: #f87171;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --transition: all 0.3s ease;
+            --max-width: 1200px;
+        }
+
+        /* Dark Mode Variables */
+        [data-theme="dark"] {
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: var(--transition);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background-image: 
+                radial-gradient(at 80% 20%, rgba(67, 97, 238, 0.15) 0, transparent 60%),
+                radial-gradient(at 20% 80%, rgba(76, 201, 240, 0.1) 0, transparent 60%);
+            overflow-x: hidden;
+        }
+
+        [data-theme="dark"] body {
+            background-image: 
+                radial-gradient(at 80% 20%, rgba(67, 97, 238, 0.1) 0, transparent 60%),
+                radial-gradient(at 20% 80%, rgba(76, 201, 240, 0.05) 0, transparent 60%);
+        }
+
+        /* App Container */
+        .app-container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Screens - only one visible at a time */
+        .screen {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            width: 100%;
+        }
+
+        .screen.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Navigation Dots for Onboarding */
+        .navigation-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+            opacity: 0.3;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .dot.active {
+            opacity: 1;
+            background: var(--primary);
+            transform: scale(1.2);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="dark"] .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: var(--surface);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            border: none;
+            color: var(--text-primary);
+            z-index: 100;
+        }
+
+        /* Onboarding Screen */
+        .onboarding-container {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            width: 100%;
+            max-width: 480px;
+            position: relative;
+            min-height: 600px;
+        }
+
+        .slides-container {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            min-height: 500px;
+        }
+
+        .slide {
+            min-width: 100%;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .slide-icon {
+            width: 160px;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            margin-bottom: 2rem;
+            color: white;
+            font-size: 4rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .slide h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .slide p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* Role Selection Screen */
+        .role-selection-container {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            width: 100%;
+            max-width: 800px;
+            min-height: 500px;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .role-selection-title {
+            font-size: 2.25rem;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .role-cards {
+            display: flex;
+            gap: 2rem;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        .role-card {
+            flex: 1;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .role-card.student {
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(58, 12, 163, 0.1));
+            border-color: var(--primary);
+        }
+
+        .role-card.teacher {
+            background: linear-gradient(135deg, rgba(76, 201, 240, 0.1), rgba(247, 140, 100, 0.1));
+            border-color: var(--accent);
+        }
+
+        .role-icon {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+            transition: var(--transition);
+        }
+
+        .student .role-icon {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .teacher .role-icon {
+            background: linear-gradient(135deg, var(--accent), #f78c64);
+            color: white;
+        }
+
+        .role-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .role-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Auth Screen */
+        .auth-container {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            width: 100%;
+            max-width: 450px;
+            min-height: 600px;
+            position: relative;
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .auth-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2.5rem;
+        }
+
+        .auth-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .auth-forms {
+            padding: 2rem;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--text-secondary);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--surface);
+            color: var(--text-primary);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .auth-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .auth-link:hover {
+            text-decoration: underline;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--text-secondary);
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--text-secondary);
+            opacity: 0.3;
+        }
+
+        .divider span {
+            padding: 0 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .role-cards {
+                flex-direction: column;
+            }
+            
+            .role-selection-container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .role-selection-title {
+                font-size: 1.75rem;
+            }
+            
+            .role-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+
+            .onboarding-container {
+                max-width: 100%;
+                min-height: 500px;
+            }
+            
+            .slide {
+                padding: 2rem 1.5rem;
+            }
+            
+            .slide-icon {
+                width: 120px;
+                height: 120px;
+                font-size: 3rem;
+            }
+            
+            .slide h2 {
+                font-size: 1.5rem;
+            }
+
+            .auth-container {
+                max-width: 100%;
+                min-height: 500px;
+            }
+            
+            .auth-forms {
+                padding: 1.5rem;
+            }
+            
+            .form-title {
+                font-size: 1.25rem;
+            }
+            
+            .auth-header {
+                padding: 1.5rem;
+            }
+            
+            .auth-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
+            }
+            
+            .auth-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Animation for screens */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .screen.active {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Theme Toggle -->
+        <button class="theme-toggle" id="themeToggle">
+            <i class="fas fa-moon"></i>
+        </button>
+
+        <!-- Onboarding Screen -->
+        <div class="screen active" id="onboardingScreen">
+            <div class="onboarding-container">
+                <div class="slides-container" id="slidesContainer">
+                    <!-- Slide 1 -->
+                    <div class="slide">
+                        <div class="slide-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h2>Personalized Practice</h2>
+                        <p>Get tailored exercises and learning paths that adapt to your strengths and weaknesses for optimal growth.</p>
+                    </div>
+                    
+                    <!-- Slide 2 -->
+                    <div class="slide">
+                        <div class="slide-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h2>Detailed Performance Analytics</h2>
+                        <p>Track your progress with comprehensive analytics and insights to identify areas for improvement.</p>
+                    </div>
+                    
+                    <!-- Slide 3 -->
+                    <div class="slide">
+                        <div class="slide-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h2>Expert Live Lessons</h2>
+                        <p>Learn from industry experts with interactive live sessions and get your questions answered in real-time.</p>
+                    </div>
+                    
+                    <!-- Slide 4 - Final CTA -->
+                    <div class="slide">
+                        <div class="slide-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h2>Start Your Learning Journey</h2>
+                        <p>Join thousands of students who are already accelerating their learning with our platform.</p>
+                        
+                        <div class="auth-buttons">
+                            <button class="btn btn-primary" id="getStartedBtn">
+                                Get Started
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Progress Indicators -->
+                <div class="navigation-dots">
+                    <div class="dot active" data-index="0"></div>
+                    <div class="dot" data-index="1"></div>
+                    <div class="dot" data-index="2"></div>
+                    <div class="dot" data-index="3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Role Selection Screen -->
+        <div class="screen" id="roleSelectionScreen">
+            <div class="role-selection-container">
+                <h1 class="role-selection-title">Select Your Role</h1>
+                
+                <div class="role-cards">
+                    <div class="role-card student" id="studentCard">
+                        <div class="role-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3>I am a Student</h3>
+                        <p>Access personalized learning paths, practice exercises, and track your progress.</p>
+                        <button class="btn btn-primary" data-role="student">
+                            Select Student
+                        </button>
+                    </div>
+                    
+                    <div class="role-card teacher" id="teacherCard">
+                        <div class="role-icon">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <h3>I am a Teacher/Admin</h3>
+                        <p>Create courses, manage students, and track classroom performance.</p>
+                        <button class="btn btn-primary" data-role="teacher">
+                            Select Teacher
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auth Screen -->
+        <div class="screen" id="authScreen">
+            <div class="auth-container">
+                <div class="auth-header">
+                    <div class="auth-icon" id="roleIcon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h1 class="auth-title" id="roleTitle">Student Portal</h1>
+                    <p class="auth-subtitle" id="roleSubtitle">Access your learning dashboard</p>
+                </div>
+                
+                <div class="auth-forms">
+                    <!-- Login Form -->
+                    <form class="auth-form active" id="loginForm">
+                        <h2 class="form-title">Welcome Back!</h2>
+                        
+                        <div class="form-group">
+                            <label for="loginEmail" class="form-label">Email or Phone Number</label>
+                            <input type="text" id="loginEmail" class="form-input" placeholder="Enter your email or phone">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password">
+                        </div>
+                        
+                        <!-- Teacher/Admin Only Field -->
+                        <div class="form-group" id="loginOrgCodeGroup" style="display: none;">
+                            <label for="loginOrgCode" class="form-label">Organization Code</label>
+                            <input type="text" id="loginOrgCode" class="form-input" placeholder="Enter your organization code">
+                        </div>
+                        
+                        <div class="auth-links" style="text-align: right;">
+                            <a href="#" class="auth-link">Forgot Password?</a>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            Login
+                        </button>
+                        
+                        <div class="divider">
+                            <span>Or continue with</span>
+                        </div>
+                        
+                        <button type="button" class="btn btn-secondary">
+                            <i class="fab fa-google"></i> Sign in with Google
+                        </button>
+
+                        <div class="auth-links">
+                            <p>Don't have an account? <a href="#" id="switchToSignup">Sign Up</a></p>
+                        </div>
+                    </form>
+                    
+                    <!-- Sign Up Form -->
+                    <form class="auth-form" id="signupForm">
+                        <h2 class="form-title">Create Account</h2>
+                        
+                        <div class="form-group">
+                            <label for="signupEmail" class="form-label">Email Address</label>
+                            <input type="email" id="signupEmail" class="form-input" placeholder="Enter your email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signupPassword" class="form-label">Password</label>
+                            <input type="password" id="signupPassword" class="form-input" placeholder="Create a password">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signupConfirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" id="signupConfirmPassword" class="form-input" placeholder="Confirm your password">
+                        </div>
+                        
+                        <!-- Teacher/Admin Only Field -->
+                        <div class="form-group" id="signupOrgCodeGroup" style="display: none;">
+                            <label for="signupOrgCode" class="form-label">Organization Code</label>
+                            <input type="text" id="signupOrgCode" class="form-input" placeholder="Enter your organization code">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            Create Account
+                        </button>
+                        
+                        <div class="divider">
+                            <span>Or continue with</span>
+                        </div>
+                        
+                        <button type="button" class="btn btn-secondary">
+                            <i class="fab fa-google"></i> Sign up with Google
+                        </button>
+
+                        <div class="auth-links">
+                            <p>Already have an account? <a href="#" id="switchToLogin">Login</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const themeToggle = document.getElementById('themeToggle');
+            const onboardingScreen = document.getElementById('onboardingScreen');
+            const roleSelectionScreen = document.getElementById('roleSelectionScreen');
+            const authScreen = document.getElementById('authScreen');
+            const getStartedBtn = document.getElementById('getStartedBtn');
+            const roleButtons = document.querySelectorAll('[data-role]');
+            const roleIcon = document.getElementById('roleIcon');
+            const roleTitle = document.getElementById('roleTitle');
+            const roleSubtitle = document.getElementById('roleSubtitle');
+            const loginOrgCodeGroup = document.getElementById('loginOrgCodeGroup');
+            const signupOrgCodeGroup = document.getElementById('signupOrgCodeGroup');
+            const switchToSignup = document.getElementById('switchToSignup');
+            const switchToLogin = document.getElementById('switchToLogin');
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            
+            // Onboarding elements
+            const slidesContainer = document.getElementById('slidesContainer');
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.dot');
+            
+            // Variables
+            let currentSlide = 0;
+            let currentRole = 'student';
+            
+            // Initialize
+            updateDots();
+            
+            // Event Listeners
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            getStartedBtn.addEventListener('click', function() {
+                showScreen(roleSelectionScreen);
+            });
+            
+            roleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    currentRole = this.getAttribute('data-role');
+                    updateAuthScreenForRole();
+                    showScreen(authScreen);
+                });
+            });
+            
+            dots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    const slideIndex = parseInt(this.getAttribute('data-index'));
+                    goToSlide(slideIndex);
+                });
+            });
+            
+            switchToSignup.addEventListener('click', function(e) {
+                e.preventDefault();
+                loginForm.classList.remove('active');
+                signupForm.classList.add('active');
+            });
+            
+            switchToLogin.addEventListener('click', function(e) {
+                e.preventDefault();
+                signupForm.classList.remove('active');
+                loginForm.classList.add('active');
+            });
+            
+            // Add swipe support for onboarding
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            slidesContainer.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, false);
+            
+            slidesContainer.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, false);
+            
+            // Keyboard navigation for onboarding
+            document.addEventListener('keydown', function(e) {
+                if (onboardingScreen.classList.contains('active')) {
+                    if (e.key === 'ArrowRight') {
+                        goToNextSlide();
+                    } else if (e.key === 'ArrowLeft') {
+                        goToPrevSlide();
+                    }
+                }
+            });
+            
+            // Functions
+            function showScreen(screen) {
+                // Hide all screens
+                document.querySelectorAll('.screen').forEach(s => {
+                    s.classList.remove('active');
+                });
+                
+                // Show the requested screen
+                screen.classList.add('active');
+            }
+            
+            function toggleTheme() {
+                const body = document.body;
+                const isDark = body.getAttribute('data-theme') === 'dark';
+                
+                if (isDark) {
+                    body.removeAttribute('data-theme');
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                } else {
+                    body.setAttribute('data-theme', 'dark');
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                }
+            }
+            
+            function updateAuthScreenForRole() {
+                if (currentRole === 'teacher') {
+                    roleIcon.innerHTML = '<i class="fas fa-chalkboard-teacher"></i>';
+                    roleTitle.textContent = 'Teacher Portal';
+                    roleSubtitle.textContent = 'Access your educator dashboard';
+                    loginOrgCodeGroup.style.display = 'block';
+                    signupOrgCodeGroup.style.display = 'block';
+                } else {
+                    roleIcon.innerHTML = '<i class="fas fa-graduation-cap"></i>';
+                    roleTitle.textContent = 'Student Portal';
+                    roleSubtitle.textContent = 'Access your learning dashboard';
+                    loginOrgCodeGroup.style.display = 'none';
+                    signupOrgCodeGroup.style.display = 'none';
+                }
+            }
+            
+            function goToSlide(slideIndex) {
+                // Update current slide
+                currentSlide = slideIndex;
+                
+                // Move slides container
+                slidesContainer.style.transform = `translateX(-${slideIndex * 100}%)`;
+                
+                // Update UI
+                updateDots();
+            }
+            
+            function goToNextSlide() {
+                if (currentSlide < slides.length - 1) {
+                    goToSlide(currentSlide + 1);
+                }
+            }
+            
+            function goToPrevSlide() {
+                if (currentSlide > 0) {
+                    goToSlide(currentSlide - 1);
+                }
+            }
+            
+            function updateDots() {
+                // Update indicators
+                dots.forEach((dot, index) => {
+                    if (index === currentSlide) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+            
+            function handleSwipe() {
+                const minSwipeDistance = 50;
+                
+                if (touchStartX - touchEndX > minSwipeDistance) {
+                    // Swipe left - go to next slide
+                    goToNextSlide();
+                } else if (touchEndX - touchStartX > minSwipeDistance) {
+                    // Swipe right - go to prev slide
+                    goToPrevSlide();
+                }
+            }
+            
+            // Form submissions
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert(`Logging in as ${currentRole}...`);
+                // In a real app, this would submit the form data to your backend
+            });
+            
+            signupForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert(`Creating ${currentRole} account...`);
+                // In a real app, this would submit the form data to your backend
+            });
+        });
+    </script>
+</body>
+</html>

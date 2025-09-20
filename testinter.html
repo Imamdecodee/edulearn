@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Interface - EduLearn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --info: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --background: #ffffff;
+            --text: #333333;
+            --card-bg: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Dark mode variables */
+        [data-theme="dark"] {
+            --background: #121212;
+            --text: #f5f5f5;
+            --card-bg: #1e1e1e;
+            --shadow: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header and Navigation */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--info);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Test Interface */
+        .test-container {
+            padding: 2rem 0;
+        }
+
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .test-info h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .test-info p {
+            opacity: 0.8;
+        }
+
+        .timer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+        }
+
+        .timer-label {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timer {
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--shadow);
+            border-radius: 4px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--info));
+            border-radius: 4px;
+            width: 30%; /* Will be updated dynamically */
+        }
+
+        .question-container {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--shadow);
+        }
+
+        .question-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .mark-review {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .mark-review input {
+            display: none;
+        }
+
+        .mark-review span {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary);
+            border-radius: 4px;
+            display: inline-block;
+            position: relative;
+        }
+
+        .mark-review input:checked + span {
+            background-color: var(--primary);
+        }
+
+        .mark-review input:checked + span::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .question-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #999;
+            font-style: italic;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option {
+            padding: 1.2rem 1.5rem;
+            border: 2px solid var(--shadow);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.1);
+        }
+
+        .option-letter {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .option.selected .option-letter {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        .test-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px var(--shadow);
+        }
+
+        .nav-btn.outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .nav-btn.outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #4ade80, #16a34a);
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+        }
+
+        /* Question Palette */
+        .question-palette {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px var(--shadow);
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .palette-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .palette-item {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            background-color: var(--shadow);
+        }
+
+        .palette-item.answered {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .palette-item.marked {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .palette-item.current {
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 0 2px var(--shadow);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .test-header {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+            }
+            
+            .test-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .option {
+                padding: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 2rem;
+            border-top: 1px solid var(--shadow);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>EduLearn</span>
+                </div>
+                <div class="nav-controls">
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="user-profile">
+                        <div class="avatar">JS</div>
+                        <span>John Student</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container test-container">
+            <div class="test-header">
+                <div class="test-info">
+                    <h1>Mathematics Test</h1>
+                    <p>Algebraic Expressions & Linear Equations</p>
+                </div>
+                <div class="timer-container">
+                    <div class="timer-label">Time Remaining</div>
+                    <div class="timer" id="timer">24:36</div>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 30%;"></div>
+            </div>
+
+            <div class="question-container">
+                <div class="question-header">
+                    <div class="question-number">Question 5 of 15</div>
+                    <label class="mark-review">
+                        <input type="checkbox">
+                        <span></span>
+                        Mark for review
+                    </label>
+                </div>
+
+                <div class="question-text">
+                    <p>Solve for x in the following equation: 2(3x + 5) - 4 = 18</p>
+                </div>
+
+                <div class="question-image">
+                    [Equation illustration would appear here]
+                </div>
+
+                <div class="options-container">
+                    <div class="option">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">x = 2</div>
+                    </div>
+                    <div class="option selected">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">x = 3</div>
+                    </div>
+                    <div class="option">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">x = 4</div>
+                    </div>
+                    <div class="option">
+                        <div class="option-letter">D</div>
+                        <div class="option-text">x = 5</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-navigation">
+                <button class="nav-btn outline">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="nav-btn outline">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="nav-btn submit-btn">
+                    <i class="fas fa-paper-plane"></i> Submit Test
+                </button>
+            </div>
+
+            <div class="question-palette">
+                <div class="palette-title">Question Palette</div>
+                <div class="palette-grid">
+                    <div class="palette-item answered">1</div>
+                    <div class="palette-item answered">2</div>
+                    <div class="palette-item answered">3</div>
+                    <div class="palette-item answered">4</div>
+                    <div class="palette-item current">5</div>
+                    <div class="palette-item">6</div>
+                    <div class="palette-item">7</div>
+                    <div class="palette-item">8</div>
+                    <div class="palette-item marked">9</div>
+                    <div class="palette-item">10</div>
+                    <div class="palette-item">11</div>
+                    <div class="palette-item">12</div>
+                    <div class="palette-item">13</div>
+                    <div class="palette-item">14</div>
+                    <div class="palette-item">15</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2023 EduLearn - Student Learning Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            
+            if (isDark) {
+                document.body.removeAttribute('data-theme');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+        });
+
+        // Timer functionality
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    timer = duration;
+                }
+                
+                // Change color when time is running low
+                if (timer < 300) { // 5 minutes
+                    display.classList.add('pulse');
+                    display.style.color = '#f72585';
+                }
+            }, 1000);
+        }
+
+        window.onload = function () {
+            const twentyFiveMinutes = 60 * 25;
+            const display = document.querySelector('#timer');
+            startTimer(twentyFiveMinutes, display);
+        };
+
+        // Option selection functionality
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', () => {
+                // Clear previous selection
+                const optionsContainer = option.closest('.options-container');
+                optionsContainer.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Select clicked option
+                option.classList.add('selected');
+                
+                // Update question palette
+                updateQuestionPalette();
+            });
+        });
+
+        // Mark for review functionality
+        document.querySelectorAll('.mark-review input').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                updateQuestionPalette();
+            });
+        });
+
+        // Question palette functionality
+        document.querySelectorAll('.palette-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // For demonstration, we'll just show an alert
+                const questionNum = this.textContent;
+                alert(`Navigating to question ${questionNum}`);
+            });
+        });
+
+        // Update question palette
+        function updateQuestionPalette() {
+            // This would be more complex in a real application
+            // For demo, we're just showing the basic functionality
+        }
+
+        // Navigation buttons
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            if (!btn.classList.contains('submit-btn')) {
+                btn.addEventListener('click', function() {
+                    // For demonstration, we'll just show an alert
+                    const btnText = this.textContent.trim();
+                    alert(`Navigating to ${btnText} question`);
+                });
+            }
+        });
+
+        // Submit test button
+        document.querySelector('.submit-btn').addEventListener('click', function() {
+            if(confirm('Are you sure you want to submit your test?')) {
+                alert('Test submitted successfully!');
+            }
+        });
+    </script>
+</body>
+</html>

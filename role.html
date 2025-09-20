@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduLearn - Select Your Role</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Variables for Theming */
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --success: #4ade80;
+            --warning: #facc15;
+            --error: #f87171;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --transition: all 0.3s ease;
+            --max-width: 1200px;
+        }
+
+        /* Dark Mode Variables */
+        [data-theme="dark"] {
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: var(--transition);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background-image: 
+                radial-gradient(at 80% 20%, rgba(67, 97, 238, 0.15) 0, transparent 60%),
+                radial-gradient(at 20% 80%, rgba(76, 201, 240, 0.1) 0, transparent 60%);
+        }
+
+        [data-theme="dark"] body {
+            background-image: 
+                radial-gradient(at 80% 20%, rgba(67, 97, 238, 0.1) 0, transparent 60%),
+                radial-gradient(at 20% 80%, rgba(76, 201, 240, 0.05) 0, transparent 60%);
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        /* Role Selection Screen */
+        .role-selection-container {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            width: 100%;
+            max-width: 800px;
+            min-height: 500px;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .role-selection-title {
+            font-size: 2.25rem;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .role-cards {
+            display: flex;
+            gap: 2rem;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        .role-card {
+            flex: 1;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .role-card.student {
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(58, 12, 163, 0.1));
+            border-color: var(--primary);
+        }
+
+        .role-card.teacher {
+            background: linear-gradient(135deg, rgba(76, 201, 240, 0.1), rgba(247, 140, 100, 0.1));
+            border-color: var(--accent);
+        }
+
+        .role-icon {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+            transition: var(--transition);
+        }
+
+        .student .role-icon {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .teacher .role-icon {
+            background: linear-gradient(135deg, var(--accent), #f78c64);
+            color: white;
+        }
+
+        .role-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .role-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .role-card .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .student .btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .teacher .btn {
+            background: linear-gradient(135deg, var(--accent), #f78c64);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .role-card .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Back Button */
+        .back-button {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            background: var(--surface);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            border: none;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: var(--surface);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            border: none;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .role-cards {
+                flex-direction: column;
+            }
+            
+            .role-selection-container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .role-selection-title {
+                font-size: 1.75rem;
+            }
+            
+            .role-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+        }
+
+        /* Animation for role selection */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .role-selection-container {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="role-selection-container">
+          <a href="./index.html">  <button class="back-button" id="backButton">
+                <i  class="fas fa-arrow-left"></i>
+            </button>
+        </a>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            
+            <h1 class="role-selection-title">Select Your Role</h1>
+            
+            <div class="role-cards">
+                <div class="role-card student" id="studentCard">
+                    <div class="role-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>I am a Student</h3>
+                    <p>Access personalized learning paths, practice exercises, and track your progress.</p>
+                 <button class="btn" onclick="window.location.href='login.html'">   <i class="fas fa-check"></i> Select Student</button>
+                </div>
+                
+
+
+                <div class="role-card teacher" id="teacherCard">
+                    <div class="role-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <h3>I am a Teacher/Admin</h3>
+                    <p>Create courses, manage students, and track classroom performance.</p>
+                  <button class="btn" onclick="window.location.href='teachlogin.html?role=teacher'"><i class="fas fa-check"></i> Select Teacher</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const backButton = document.getElementById('backButton');
+            const themeToggle = document.getElementById('themeToggle');
+            const studentCard = document.getElementById('studentCard');
+            const teacherCard = document.getElementById('teacherCard');
+            
+            // Event Listeners
+            backButton.addEventListener('click', function() {
+                alert('Navigating back to onboarding screen');
+                // In a real app, this would navigate back to the previous screen
+            });
+            
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            studentCard.addEventListener('click', function() {
+                selectRole('student');
+            });
+            
+            teacherCard.addEventListener('click', function() {
+                selectRole('teacher');
+            });
+            
+            // Functions
+            function toggleTheme() {
+                const body = document.body;
+                const isDark = body.getAttribute('data-theme') === 'dark';
+                
+                if (isDark) {
+                    body.removeAttribute('data-theme');
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                } else {
+                    body.setAttribute('data-theme', 'dark');
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                }
+            }
+            
+            function selectRole(role) {
+                // Visual feedback for selection
+                if (role === 'student') {
+                    studentCard.style.transform = 'scale(1.02)';
+                    studentCard.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.25)';
+                    teacherCard.style.opacity = '0.7';
+                    
+                    // Add checkmark to show selection
+                    const studentIcon = studentCard.querySelector('.role-icon');
+                    studentIcon.innerHTML = '<i class="fas fa-check"></i>';
+                    
+                    // Reset teacher card
+                    const teacherIcon = teacherCard.querySelector('.role-icon');
+                    teacherIcon.innerHTML = '<i class="fas fa-chalkboard-teacher"></i>';
+                } else {
+                    teacherCard.style.transform = 'scale(1.02)';
+                    teacherCard.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.25)';
+                    studentCard.style.opacity = '0.7';
+                    
+                    // Add checkmark to show selection
+                    const teacherIcon = teacherCard.querySelector('.role-icon');
+                    teacherIcon.innerHTML = '<i class="fas fa-check"></i>';
+                    
+                    // Reset student card
+                    const studentIcon = studentCard.querySelector('.role-icon');
+                    studentIcon.innerHTML = '<i class="fas fa-graduation-cap"></i>';
+                }
+                
+                // In a real app, this would navigate to the appropriate authentication screen
+                setTimeout(() => {
+                    alert(`Redirecting to ${role} authentication...`);
+                }, 500);
+            }
+        });
+    </script>
+</body>
+</html>

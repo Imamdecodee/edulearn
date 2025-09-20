@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject Detail - EduLearn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --info: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --background: #ffffff;
+            --text: #333333;
+            --card-bg: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Dark mode variables */
+        [data-theme="dark"] {
+            --background: #121212;
+            --text: #f5f5f5;
+            --card-bg: #1e1e1e;
+            --shadow: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header and Navigation */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--info);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Screen management */
+        .screens-container {
+            position: relative;
+            min-height: calc(100vh - 80px);
+            overflow: hidden;
+        }
+
+        .screen {
+            display: none;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            padding: 2rem 0;
+        }
+
+        .screen.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Common components */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 8px 16px var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px var(--shadow);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px var(--shadow);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--info), var(--secondary));
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Subject Detail Screen */
+        .subject-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 16px;
+        }
+
+        .subject-icon-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .subject-title {
+            flex: 1;
+        }
+
+        .subject-title h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: white;
+        }
+
+        .topic-list {
+            list-style: none;
+        }
+
+        .topic-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--shadow);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topic-item:last-child {
+            border-bottom: none;
+        }
+
+        .topic-info {
+            flex: 1;
+            min-width: 250px;
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .topic-info h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin: 0.5rem 0;
+            height: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--info));
+        }
+
+        .topic-actions {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        /* Stats section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .subject-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .topic-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .topic-actions {
+                width: 100%;
+                justify-content: center;
+                margin-top: 1rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 2rem;
+            border-top: 1px solid var(--shadow);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>EduLearn</span>
+                </div>
+                <div class="nav-controls">
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="user-profile">
+                        <div class="avatar">JS</div>
+                        <span>John Student</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="screens-container">
+        <!-- Subject Detail Screen -->
+        <section id="subject-detail" class="screen active">
+            <div class="container">
+                <div class="subject-header">
+                    <button class="back-btn" onclick="history.back()">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div class="subject-icon-large">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div class="subject-title">
+                        <h1>Mathematics</h1>
+                        <p>Algebra, Calculus, Geometry, Statistics</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="card stat-card">
+                        <div class="stat-value">78%</div>
+                        <div class="stat-label">Overall Mastery</div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-value">12h</div>
+                        <div class="stat-label">Time Studied</div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-value">24</div>
+                        <div class="stat-label">Topics Covered</div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-value">15</div>
+                        <div class="stat-label">Tests Completed</div>
+                    </div>
+                </div>
+
+                <h2>Topics</h2>
+                <div class="card">
+                    <ul class="topic-list">
+                        <li class="topic-item">
+                            <div class="topic-info">
+                                <h3>Algebraic Expressions</h3>
+                                <p>Variables, constants, and operations</p>
+                                <div class="progress-container">
+                                    <div class="progress-bar" style="width: 80%"></div>
+                                </div>
+                                <span>80% Mastery</span>
+                            </div>
+                            <div class="topic-actions">
+                                <button class="btn btn-sm">
+                                    <i class="fas fa-pen-fancy"></i> Practice This Topic
+                                </button>
+                                <button class="btn btn-sm btn-outline">
+                                    <i class="fas fa-file-alt"></i> Take Full Test
+                                </button>
+                            </div>
+                        </li>
+                        <li class="topic-item">
+                            <div class="topic-info">
+                                <h3>Linear Equations</h3>
+                                <p>Solving equations with one variable</p>
+                                <div class="progress-container">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+                                <span>70% Mastery</span>
+                            </div>
+                            <div class="topic-actions">
+                                <button class="btn btn-sm">
+                                    <i class="fas fa-pen-fancy"></i> Practice This Topic
+                                </button>
+                                <button class="btn btn-sm btn-outline">
+                                    <i class="fas fa-file-alt"></i> Take Full Test
+                                </button>
+                            </div>
+                        </li>
+                        <li class="topic-item">
+                            <div class="topic-info">
+                                <h3>Quadratic Equations</h3>
+                                <p>Polynomials of degree two</p>
+                                <div class="progress-container">
+                                    <div class="progress-bar" style="width: 55%"></div>
+                                </div>
+                                <span>55% Mastery</span>
+                            </div>
+                            <div class="topic-actions">
+                                <button class="btn btn-sm">
+                                    <i class="fas fa-pen-fancy"></i> Practice This Topic
+                                </button>
+                                <button class="btn btn-sm btn-outline">
+                                    <i class="fas fa-file-alt"></i> Take Full Test
+                                </button>
+                            </div>
+                        </li>
+                        <li class="topic-item">
+                            <div class="topic-info">
+                                <h3>Geometry Basics</h3>
+                                <p>Points, lines, and angles</p>
+                                <div class="progress-container">
+                                    <div class="progress-bar" style="width: 60%"></div>
+                                </div>
+                                <span>60% Mastery</span>
+                            </div>
+                            <div class="topic-actions">
+                                <button class="btn btn-sm">
+                                    <i class="fas fa-pen-fancy"></i> Practice This Topic
+                                </button>
+                                <button class="btn btn-sm btn-outline">
+                                    <i class="fas fa-file-alt"></i> Take Full Test
+                                </button>
+                            </div>
+                        </li>
+                        <li class="topic-item">
+                            <div class="topic-info">
+                                <h3>Trigonometry</h3>
+                                <p>Triangles, sin, cos, tan functions</p>
+                                <div class="progress-container">
+                                    <div class="progress-bar" style="width: 45%"></div>
+                                </div>
+                                <span>45% Mastery</span>
+                            </div>
+                            <div class="topic-actions">
+                                <button class="btn btn-sm">
+                                    <i class="fas fa-pen-fancy"></i> Practice This Topic
+                                </button>
+                                <button class="btn btn-sm btn-outline">
+                                    <i class="fas fa-file-alt"></i> Take Full Test
+                                </button>
+                            </div>
+                        </li>
+                        <li class="topic-item">
+                            <div class="topic-info">
+                                <h3>Statistics & Probability</h3>
+                                <p>Data analysis and chance</p>
+                                <div class="progress-container">
+                                    <div class="progress-bar" style="width: 65%"></div>
+                                </div>
+                                <span>65% Mastery</span>
+                            </div>
+                            <div class="topic-actions">
+                                <button class="btn btn-sm">
+                                    <i class="fas fa-pen-fancy"></i> Practice This Topic
+                                </button>
+                                <button class="btn btn-sm btn-outline">
+                                    <i class="fas fa-file-alt"></i> Take Full Test
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="quick-actions" style="margin-top: 2rem;">
+                    <button class="btn">
+                        <i class="fas fa-plus"></i> Create Custom Test
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-play-circle"></i> Continue Learning
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2023 EduLearn - Student Learning Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            
+            if (isDark) {
+                document.body.removeAttribute('data-theme');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+        });
+
+        // Add interactivity to buttons
+        document.querySelectorAll('.topic-actions .btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const topic = this.closest('.topic-item').querySelector('h3').textContent;
+                const action = this.textContent.trim();
+                alert(`Action: ${action} for ${topic}`);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Setup - EduLearn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --info: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --background: #ffffff;
+            --text: #333333;
+            --card-bg: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Dark mode variables */
+        [data-theme="dark"] {
+            --background: #121212;
+            --text: #f5f5f5;
+            --card-bg: #1e1e1e;
+            --shadow: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header and Navigation */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--info);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Screen management */
+        .screen {
+            display: none;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            padding: 2rem 0;
+        }
+
+        .screen.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Common components */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 8px 16px var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px var(--shadow);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px var(--shadow);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--info), var(--secondary));
+        }
+
+        .btn-lg {
+            padding: 16px 32px;
+            font-size: 1.2rem;
+        }
+
+        .btn-full {
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Test Setup Screen */
+        .setup-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        .config-options {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .option-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .option-label {
+            display: block;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .option-card {
+            padding: 1.5rem 1rem;
+            border: 2px solid var(--shadow);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .option-card:hover, .option-card.selected {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .option-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .option-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .option-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            color: white;
+            padding: 2rem;
+            border-radius: 16px;
+            margin-top: 2rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-lg {
+                padding: 12px 24px;
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 2rem;
+            border-top: 1px solid var(--shadow);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>EduLearn</span>
+                </div>
+                <div class="nav-controls">
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="user-profile">
+                        <div class="avatar">JS</div>
+                        <span>John Student</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Test Setup Screen -->
+        <section id="test-setup" class="screen active">
+            <div class="container">
+                <div class="setup-header">
+                    <button class="back-btn" onclick="history.back()">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h1>Test Setup</h1>
+                </div>
+
+                <div class="config-options">
+                    <div class="card">
+                        <div class="option-group">
+                            <label class="option-label">Select Subject</label>
+                            <div class="options-grid">
+                                <div class="option-card selected">
+                                    <div class="option-icon">
+                                        <i class="fas fa-calculator"></i>
+                                    </div>
+                                    <div class="option-title">Mathematics</div>
+                                    <div class="option-desc">Algebra, Calculus, Geometry</div>
+                                </div>
+                                <div class="option-card">
+                                    <div class="option-icon">
+                                        <i class="fas fa-flask"></i>
+                                    </div>
+                                    <div class="option-title">Science</div>
+                                    <div class="option-desc">Biology, Chemistry, Physics</div>
+                                </div>
+                                <div class="option-card">
+                                    <div class="option-icon">
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                    <div class="option-title">English</div>
+                                    <div class="option-desc">Literature, Grammar, Writing</div>
+                                </div>
+                                <div class="option-card">
+                                    <div class="option-icon">
+                                        <i class="fas fa-globe"></i>
+                                    </div>
+                                    <div class="option-title">Social Studies</div>
+                                    <div class="option-desc">History, Geography, Civics</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="option-group">
+                            <label class="option-label">Number of Questions</label>
+                            <div class="options-grid">
+                                <div class="option-card selected">
+                                    <div class="option-icon">
+                                        <i class="fas fa-list-ol"></i>
+                                    </div>
+                                    <div class="option-title">10 Questions</div>
+                                    <div class="option-desc">Quick practice</div>
+                                </div>
+                                <div class="option-card">
+                                    <div class="option-icon">
+                                        <i class="fas fa-tasks"></i>
+                                    </div>
+                                    <div class="option-title">20 Questions</div>
+                                    <div class="option-desc">Standard test</div>
+                                </div>
+                                <div class="option-card">
+                                    <div class="option-icon">
+                                        <i class="fas fa-file-alt"></i>
+                                    </div>
+                                    <div class="option-title">50 Questions</div>
+                                    <div class="option-desc">Comprehensive test</div>
+                                </div>
+                                <div class="option-card">
+                                    <div class="option-icon">
+                                        <i class="fas fa-infinity"></i>
+                                    </div>
+                                    <div class="option-title">Full Set</div>
+                                    <div class="option-desc">All available questions</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="option-group">
+                            <label class="option-label">Time Limit</label>
+                            <div class="options-grid">
+                                <div class="option-card">
+                                    <div class="option-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="option-title">10 Minutes</div>
+                                    <div class="option-desc">Quick session</div>
+                                </div>
+                                <div class="option-card selected">
+                                    <div class="option-icon">
+                                        <i class="fas fa-stopwatch"></i>
+                                    </div>
+                                    <div class="option-title">30 Minutes</div>
+                                    <div class="option-desc">Standard time</div>
+                                </div>
+                                <div class="option-card">
+                                    <div class="option-icon">
+                                        <i class="fas fa-hourglass-half"></i>
+                                    </div>
+                                    <div class="option-title">1 Hour</div>
+                                    <div class="option-desc">Extended practice</div>
+                                </div>
+                                <div class="option-card">
+                                    <div class="option-icon">
+                                        <i class="fas fa-graduation-cap"></i>
+                                    </div>
+                                    <div class="option-title">Exam Mode</div>
+                                    <div class="option-desc">Strict timing</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="option-group">
+                            <label class="option-label">Focus Area</label>
+                            <div class="options-grid">
+                                <div class="option-card selected">
+                                    <div class="option-icon">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <div class="option-title">All Topics</div>
+                                    <div class="option-desc">Complete coverage</div>
+                                </div>
+                                <div class="option-card">
+                                    <div class="option-icon">
+                                        <i class="fas fa-random"></i>
+                                    </div>
+                                    <div class="option-title">Random Selection</div>
+                                    <div class="option-desc">Mixed questions</div>
+                                </div>
+                                <div class="option-card">
+                                    <div class="option-icon">
+                                        <i class="fas fa-bolt"></i>
+                                    </div>
+                                    <div class="option-title">Weak Topics</div>
+                                    <div class="option-desc">Focus on improvements</div>
+                                </div>
+                                <div class="option-card">
+                                    <div class="option-icon">
+                                        <i class="fas fa-bullseye"></i>
+                                    </div>
+                                    <div class="option-title">Custom Selection</div>
+                                    <div class="option-desc">Choose specific topics</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <h2>Test Summary</h2>
+                        <div class="summary-item">
+                            <span>Subject:</span>
+                            <span>Mathematics</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Questions:</span>
+                            <span>10</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Time Limit:</span>
+                            <span>30 Minutes</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Focus Area:</span>
+                            <span>All Topics</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Estimated Duration:</span>
+                            <span>15-20 minutes</span>
+                        </div>
+
+                        <button class="btn btn-lg btn-full" style="margin-top: 1.5rem;">
+                            <i class="fas fa-play-circle"></i> Start Test Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2023 EduLearn - Student Learning Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            
+            if (isDark) {
+                document.body.removeAttribute('data-theme');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+        });
+
+        // Option selection functionality
+        document.querySelectorAll('.option-card').forEach(card => {
+            card.addEventListener('click', () => {
+                // Get the parent option group
+                const optionGroup = card.closest('.option-group');
+                
+                // Remove selected class from all cards in this group
+                optionGroup.querySelectorAll('.option-card').forEach(c => {
+                    c.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked card
+                card.classList.add('selected');
+                
+                // Update the test summary
+                updateTestSummary();
+            });
+        });
+
+        // Function to update test summary based on selections
+        function updateTestSummary() {
+            const subject = document.querySelector('.option-group:nth-child(1) .option-card.selected .option-title').textContent;
+            const questions = document.querySelector('.option-group:nth-child(2) .option-card.selected .option-title').textContent;
+            const timeLimit = document.querySelector('.option-group:nth-child(3) .option-card.selected .option-title').textContent;
+            const focusArea = document.querySelector('.option-group:nth-child(4) .option-card.selected .option-title').textContent;
+            
+            // Update summary items
+            const summaryItems = document.querySelectorAll('.summary-item');
+            summaryItems[0].querySelector('span:last-child').textContent = subject;
+            summaryItems[1].querySelector('span:last-child').textContent = questions;
+            summaryItems[2].querySelector('span:last-child').textContent = timeLimit;
+            summaryItems[3].querySelector('span:last-child').textContent = focusArea;
+        }
+
+        // Initialize the test summary
+        updateTestSummary();
+    </script>
+</body>
+</html>
